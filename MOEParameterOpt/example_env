@@ -1,0 +1,26 @@
+# API url
+API_URL="<url>/gp/next_points/epi"
+
+# Number of threads per simulation type
+THREADS=3
+
+# Image to consider (Is set in the start script)
+#JL_IMG_NUM=11
+
+# Time between checking processes (in seconds)
+SLEEP_TIME=120
+
+# Path to executable
+APP_PATH="../build/atree.out "
+
+# Name file Gabor (File is called <name>_<img_num>.json)
+MOE_GAB="./data_MOE_Gabor"
+RAW_GAB="./data_raw_Gabor"
+
+# Name file CDL (File is called <name>_<img_num>.json)
+MOE_CDL="./data_MOE_CDL"
+RAW_CDL="./data_raw_CDL"
+
+# Name file Wilkinson (File is called <name>_<img_num>.json)
+MOE_WIL="./data_MOE_Wilkinson"
+RAW_WIL="./data_raw_Wilkinson"
