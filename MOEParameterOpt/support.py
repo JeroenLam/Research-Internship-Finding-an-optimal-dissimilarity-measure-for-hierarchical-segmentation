@@ -6,20 +6,20 @@ import requests
 def generateBODictGabor():
     data = {
         "domain_info": {
-            "dim": 15,
+            "dim": 12,
             "domain_bounds": [
-                { "max" :  4, "min" : 1 },      # p
+                # { "max" :  2, "min" : 2 },      # p
                 { "max" :  5, "min" : 0.5 },    # lambda_o  (Based on odd gabor paper)
                 { "max" :  2, "min" : 0.5 },    # sigma_o   
                 { "max" :  2, "min" : 0 },      # gamma_o
-                { "max" :  4, "min" : 1 },      # p_o
+                # { "max" :  2, "min" : 2 },      # p_o
                 { "max" :  5, "min" : 0.1 },    # slope_o
                 { "max" : 40, "min" : 0 },      # center_o
                 { "max" : 10, "min" : 1 },      # weight_o
                 { "max" :  5, "min" : 0.5 },    # lambda_e
                 { "max" :  2, "min" : 0.5 },    # sigma_e
                 { "max" :  2, "min" : 0 },      # gamma_e
-                { "max" :  4, "min" : 1 },      # p_e
+                # { "max" :  2, "min" : 2 },      # p_e
                 { "max" :  5, "min" : 0.1 },    # slope_e
                 { "max" : 40, "min" : 0 },      # center_e
                 { "max" :  1, "min" : 0 },      # weight_e
@@ -36,14 +36,14 @@ def generateBODictGabor():
 def generateBODictCDL():
     data = {
         "domain_info": {
-            "dim": 9,
+            "dim": 6,
             "domain_bounds": [
-                { "max" :  4, "min" : 1 },      # p
-                { "max" :  4, "min" : 1 },      # p_edge
+                # { "max" :  2, "min" : 2 },      # p
+                # { "max" :  2, "min" : 2 },      # p_edge
                 { "max" :  5, "min" : 0.1 },    # slope_edge
                 { "max" : 40, "min" : 0 },      # center_edge
                 { "max" : 10, "min" : 1 },      # weight_edge
-                { "max" :  4, "min" : 1 },      # p_ridge
+                # { "max" :  2, "min" : 2 },      # p_ridge
                 { "max" :  5, "min" : 0.1 },    # slope_ridge
                 { "max" : 40, "min" : 0 },      # center_ridge
                 { "max" :  1, "min" : 0 },      # weight_ridge
@@ -57,17 +57,17 @@ def generateBODictCDL():
     return data
 
 # Create an empty Baysian optimisation dict
-def generateBODictWilkinson():
+def generateBODictDifference():
     data = {
         "domain_info": {
-            "dim": 6,
+            "dim": 3,
             "domain_bounds": [
-                { "max" :  4, "min" : 1 },      # p_f
-                { "max" :  4, "min" : -4 },     # w_f
-                { "max" :  4, "min" : 1 },      # p_b
-                { "max" :  4, "min" : -4 },     # w_b
-                { "max" :  4, "min" : 1 },      # p_c
-                { "max" :  4, "min" : -4 },     # w_c
+                # { "max" :  2, "min" : 2 },      # p_f
+                { "max" :  1, "min" : -1 },     # w_f
+                # { "max" :  2, "min" : 2 },      # p_b
+                { "max" :  1, "min" : -1 },     # w_b
+                # { "max" :  2, "min" : 2 },      # p_c
+                { "max" :  1, "min" : -1 },     # w_c
             ]
         },
         "gp_historical_info": {

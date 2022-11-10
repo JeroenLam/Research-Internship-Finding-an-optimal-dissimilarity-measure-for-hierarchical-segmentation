@@ -16,7 +16,7 @@ dict_path_MOE = os.getenv('MOE_WIL') + '_' + str(img_num) + ".json"
 dict_path_raw = os.getenv('RAW_WIL') + '_' + str(img_num) + ".json"
 
 # Define constants for each run
-mode     = "Wilkinson"
+mode     = "Difference"
 img_path = "../img/Campus/zernike180701p" + str(img_num) + ".png"
 num_gt   = '3'
 
@@ -33,7 +33,7 @@ args_img = [ex_path, mode, img_path, num_gt, gt_path(1,img_num), gt_path(2,img_n
 if exists(dict_path_MOE):
     data_moe = readDict(dict_path_MOE)
 else:
-    data_moe = generateBODictWilkinson()
+    data_moe = generateBODictDifference()
 
 # Check if the raw data dict exists, if so, load it, otherwise create an new empty dict
 if exists(dict_path_raw):
@@ -48,13 +48,18 @@ while (True):
     # Create new processes if neccesary
     if len(processes) < threads:
         while len(processes) < threads:
-            print(" ===== Wilkinson: Created new process =====")
+            print(" ===== Difference: Created new process =====")
             # Get new parameters
             newPar = getNewPoints(api_url, data_moe)
+            # Insert the p values
+            moePar = newPar.copy()
+            newPar.insert(0,'2.0')
+            newPar.insert(2,'2.0')
+            newPar.insert(4,'2.0')
             # Spawn new subprocess
             process = subprocess.Popen(args_img + newPar, stdout = subprocess.PIPE)
             # Append to the processes array
-            processes.append([process, newPar])
+            processes.append([process, newPar, moePar])
 
     # Sleep for the desired time
     time.sleep(sleep_time)
@@ -63,15 +68,16 @@ while (True):
     for idx in range(len(processes)-1, -1, -1):
         # Check if processes are done
         if (processes[idx][0].poll != None):
-            print(" ===== Wilkinson: Process finished =====")
+            print(" ===== Difference: Process finished =====")
             # If so, process the scores
             scores = str(processes[idx][0].communicate())[3:-10].split(",")
             final_score = float(scores[0])
-            parameters = processes[idx][1]
+            parameters_raw = processes[idx][1]
+            parameters_moe = processes[idx][2]
 
             # Add to the dicts as a new sampled point
-            data_moe = addSample(data_moe, parameters, final_score)
-            data_raw["data"].append(parameters + scores)
+            data_moe = addSample(data_moe, parameters_moe, final_score)
+            data_raw["data"].append(parameters_raw + scores)
 
             # Store both dicts on disk
             writeDict(dict_path_MOE, data_moe)

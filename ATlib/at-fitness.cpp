@@ -212,7 +212,6 @@ double at::fitness_function_quick(at::AlphaTree& tree, Mat& img_gt, double w_AS,
         // Allocate new alpha array
         vector<double> newAlphas;
 
-
         for (int iter = 0; iter < steps; ++iter)
         {
             if (iter % 20 == 0)

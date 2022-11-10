@@ -425,34 +425,6 @@ vector<Mat> Laplacian_1d_4(Mat& img)
 
 
 // ============================================================
-//                      Wilkinson Detector
-// ============================================================
-vector<Mat> compute_Wilkinson(vector<Mat> for_dif, vector<Mat> back_dif, vector<Mat> cent_dif, vector<double> weigths)
-{
-    // Allocate alpha arrays
-    vector<Mat> alphas;
-
-    // For each direction
-    for (int idx = 0; idx < 2; ++idx)
-    {
-        // Create an empty alpha image
-        alphas.emplace_back(for_dif[0].rows - 1, for_dif[0].cols - 1, CV_64F, 0.0);
-
-        // For each pixel in the alpha matrix
-        for (int y = 0; y < alphas[idx].rows; ++y)
-            for (int x = 0; x < alphas[idx].cols; ++x)
-            {
-                alphas[idx].at<double>(y,x) = abs(weigths[0] * for_dif[idx].at<double>(y,x) + 
-                                                  weigths[1] * back_dif[idx].at<double>(y,x) + 
-                                                  weigths[2] * cent_dif[idx].at<double>(y,x));
-            }
-    }
-    
-    return alphas;
-}
-
-
-// ============================================================
 //                       Example code
 // ============================================================
 double OrthogonalEdgeWeight = 1.0;

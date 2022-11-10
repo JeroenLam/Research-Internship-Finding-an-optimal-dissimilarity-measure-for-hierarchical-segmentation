@@ -34,11 +34,6 @@ std::vector<cv::Mat> forward_difference_4(cv::Mat& img);
 std::vector<cv::Mat> central_difference_4(cv::Mat& img);
 std::vector<cv::Mat> Laplacian_1d_4(cv::Mat& img);
 
-
-// Wilkinson detector
-std::vector<cv::Mat> compute_Wilkinson(std::vector<cv::Mat> for_dif, std::vector<cv::Mat> back_dif, std::vector<cv::Mat> cent_dif, std::vector<double> weigths);
-
-
 // Example code
 std::vector<cv::Mat> alpha_example(cv::Mat& img);
 double simpleSalience(cv::Vec3b p, cv::Vec3b q);

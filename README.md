@@ -24,8 +24,8 @@ You can change the number fo alpha values considered by changing the `SIM_STEPS`
 
 ## Running the code
 Below you can find example commands to compute the score of a given set ground truth images and a command that can be used to filter the alpha tree. \
-`./atree.out Wilkinson ../img/Campus/zernike180701p11.png 3 ../img/Campus/GT1p11.png ../img/Campus/GT2p11.png ../img/Campus/GT3p11.png 2 1 2 1 2 1` \
-`./atree.out Wilkinson ../img/Campus/zernike180701p11.png -3 4 8 12 2 1 2 1 2 1` 
+`./atree.out Difference ../img/Campus/zernike180701p11.png 3 ../img/Campus/GT1p11.png ../img/Campus/GT2p11.png ../img/Campus/GT3p11.png 2 1 2 1 2 1` \
+`./atree.out Difference ../img/Campus/zernike180701p11.png -3 4 8 12 2 1 2 1 2 1` 
 
 ## Running the optimisation script
 Make sure to run an instance of the [MOE Baysian Optimisation toolbox](https://github.com/Yelp/MOE) in Docker. \

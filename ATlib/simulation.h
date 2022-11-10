@@ -24,7 +24,7 @@ at::AlphaTree generate_cd_1dl_alphatree(cv::Mat& img, double l_p,
                                         double p_edge, double slope_edge, double center_edge, double weight_edge,
                                         double p_ridge, double slope_ridge, double center_ridge, double weight_ridge);
 
-at::AlphaTree generate_wilkinson_alphatree(cv::Mat& img, double p_f, double w_f, double p_b, double w_b, double p_c, double w_c);
+at::AlphaTree generate_difference_alphatree(cv::Mat& img, double p_f, double w_f, double p_b, double w_b, double p_c, double w_c);
 
 std::vector<double> compute_scores(at::AlphaTree img_tree, std::vector<cv::Mat> ground_truths, enum combMeth method);
 

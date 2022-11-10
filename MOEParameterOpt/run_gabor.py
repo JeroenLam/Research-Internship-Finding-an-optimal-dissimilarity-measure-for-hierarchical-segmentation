@@ -51,10 +51,15 @@ while (True):
             print(" ===== Gabor: Created new process =====")
             # Get new parameters
             newPar = getNewPoints(api_url, data_moe)
+            # Insert the p values
+            moePar = newPar.copy()
+            newPar.insert(0,'2.0')
+            newPar.insert(4,'2.0')
+            newPar.insert(11,'2.0')
             # Spawn new subprocess
             process = subprocess.Popen(args_img + newPar, stdout = subprocess.PIPE)
             # Append to the processes array
-            processes.append([process, newPar])
+            processes.append([process, newPar, moePar])
 
     # Sleep for the desired time
     time.sleep(sleep_time)
@@ -67,11 +72,12 @@ while (True):
             # If so, process the scores
             scores = str(processes[idx][0].communicate())[3:-10].split(",")
             final_score = float(scores[0])
-            parameters = processes[idx][1]
+            parameters_raw = processes[idx][1]
+            parameters_moe = processes[idx][2]
 
             # Add to the dicts as a new sampled point
-            data_moe = addSample(data_moe, parameters, final_score)
-            data_raw["data"].append(parameters + scores)
+            data_moe = addSample(data_moe, parameters_moe, final_score)
+            data_raw["data"].append(parameters_raw + scores)
 
             # Store both dicts on disk
             writeDict(dict_path_MOE, data_moe)

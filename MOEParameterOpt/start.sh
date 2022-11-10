@@ -3,7 +3,7 @@ export JL_IMG_NUM=$1
 
 screen -dmS jlGabor$1 bash -c "python3 run_gabor.py; exec bash"
 screen -dmS jlCDL$1 bash -c "python3 run_CDL.py; exec bash"
-screen -dmS jlWilkinson$1 bash -c "python3 run_wilkinson.py; exec bash"
+screen -dmS jlDifference$1 bash -c "python3 run_difference.py; exec bash"
 
 # screen -ls                : list of existing screens
 # screen -r <name>          : reconnect to screen to see output

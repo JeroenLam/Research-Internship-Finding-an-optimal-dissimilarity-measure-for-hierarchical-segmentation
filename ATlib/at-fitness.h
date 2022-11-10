@@ -12,7 +12,7 @@
 #include <stack>
 #include <utility> // For pairs
 
-#define SIM_STEPS 20
+#define SIM_STEPS 400
 
 namespace at
 {

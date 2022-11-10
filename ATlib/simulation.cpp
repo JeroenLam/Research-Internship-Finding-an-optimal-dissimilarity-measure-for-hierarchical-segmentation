@@ -45,12 +45,12 @@ at::AlphaTree generate_gabor_alphatree(Mat& img, double l_p,
     // Compute the odd gabor filters
     vector<Mat> edge_sig = odd_gabor(img, size, thetas, lambda_o, sigma_o, gamma_o, -1, cv::BORDER_DEFAULT);
     edge_sig             = Lp_over_channels(edge_sig, p_edge);
-    edge_sig             = sigmoidal_activation(edge_sig, slope_edge, center_edge, weight_edge, 0);
+    edge_sig             = sigmoidal_activation(edge_sig, slope_edge, center_edge, 1, 0);
 
     // Compute the even gabor filters    
     vector<Mat> ridge_sig = even_gabor(img, size, thetas, lambda_e, sigma_e, gamma_e, -1, cv::BORDER_DEFAULT);
     ridge_sig             = Lp_over_channels(ridge_sig, p_ridge);
-    ridge_sig             = sigmoidal_activation(ridge_sig, slope_ridge, center_ridge, weight_ridge, 0);
+    ridge_sig             = sigmoidal_activation(ridge_sig, slope_ridge, center_ridge, 1, 0);
 
     // Define loop constants
     int vec_size = dissimilarity.size();
@@ -60,7 +60,24 @@ at::AlphaTree generate_gabor_alphatree(Mat& img, double l_p,
     for (int v_idx = 0; v_idx < vec_size; ++v_idx)
         for (int y_idx = 0; y_idx < rows; ++y_idx)
             for (int x_idx = 0; x_idx < cols; ++x_idx)
-                dissimilarity[v_idx].at<double>(y_idx, x_idx) *= edge_sig[v_idx].at<double>(y_idx, x_idx) * ridge_sig[v_idx].at<double>(y_idx, x_idx);
+            {
+                // Find the largest responce
+                double bound;
+                double signal;
+                if (edge_sig[v_idx].at<double>(y_idx, x_idx) < ridge_sig[v_idx].at<double>(y_idx, x_idx))
+                {
+                    bound = weight_ridge;
+                    signal = ridge_sig[v_idx].at<double>(y_idx, x_idx);
+                }
+                else
+                {
+                    bound = weight_edge;
+                    signal = edge_sig[v_idx].at<double>(y_idx, x_idx);
+                }
+                // Linearly interpolate between 1 and the weight based on the signal responce (0 responce -> 1, 1 responce -> weight)
+                double difference = bound - 1;
+                dissimilarity[v_idx].at<double>(y_idx, x_idx) *= (1 + (difference * signal));
+            }
 
     // Build and return the alpha tree
     at::AlphaTree retTree(dissimilarity[0], dissimilarity[1]);
@@ -79,12 +96,12 @@ at::AlphaTree generate_cd_1dl_alphatree(Mat& img, double l_p,
     // Compute the odd gabor filters
     vector<Mat> edge_sig = central_difference_4(img);
     edge_sig             = Lp_over_channels(edge_sig, p_edge);
-    edge_sig             = sigmoidal_activation(edge_sig, slope_edge, center_edge, weight_edge, 0);
+    edge_sig             = sigmoidal_activation(edge_sig, slope_edge, center_edge, 1, 0);
 
     // Compute the even gabor filters    
     vector<Mat> ridge_sig = Laplacian_1d_4(img);
     ridge_sig             = Lp_over_channels(ridge_sig, p_ridge);
-    ridge_sig             = sigmoidal_activation(ridge_sig, slope_ridge, center_ridge, weight_ridge, 0);
+    ridge_sig             = sigmoidal_activation(ridge_sig, slope_ridge, center_ridge, 1, 0);
 
     // Define loop constants
     int vec_size = dissimilarity.size();
@@ -94,15 +111,35 @@ at::AlphaTree generate_cd_1dl_alphatree(Mat& img, double l_p,
     for (int v_idx = 0; v_idx < vec_size; ++v_idx)
         for (int y_idx = 0; y_idx < rows; ++y_idx)
             for (int x_idx = 0; x_idx < cols; ++x_idx)
-                dissimilarity[v_idx].at<double>(y_idx, x_idx) *= edge_sig[v_idx].at<double>(y_idx, x_idx) * ridge_sig[v_idx].at<double>(y_idx, x_idx);
-
+            {
+                // Find the largest responce
+                int largest_mode;
+                double bound;
+                double signal;
+                if (edge_sig[v_idx].at<double>(y_idx, x_idx) < ridge_sig[v_idx].at<double>(y_idx, x_idx))
+                {
+                    largest_mode = 1;
+                    bound = weight_ridge;
+                    signal = ridge_sig[v_idx].at<double>(y_idx, x_idx);
+                }
+                else
+                {
+                    largest_mode = 0;
+                    bound = weight_edge;
+                    signal = edge_sig[v_idx].at<double>(y_idx, x_idx);
+                }
+                // Linearly interpolate between 1 and the weight based on the signal responce (0 responce -> 1, 1 responce -> weight)
+                double difference = bound - 1;
+                dissimilarity[v_idx].at<double>(y_idx, x_idx) *= (1 + (difference * signal));
+            }
+            
     // Build and return the alpha tree
     at::AlphaTree retTree(dissimilarity[0], dissimilarity[1]);
 
     return retTree;
 }
 
-at::AlphaTree generate_wilkinson_alphatree(Mat& img, double p_f, double w_f, double p_b, double w_b, double p_c, double w_c)
+at::AlphaTree generate_difference_alphatree(Mat& img, double p_f, double w_f, double p_b, double w_b, double p_c, double w_c)
 {
     // Compute the differences
     vector<Mat> for_dif  = forward_difference_4(img);
@@ -112,9 +149,25 @@ at::AlphaTree generate_wilkinson_alphatree(Mat& img, double p_f, double w_f, dou
     vector<Mat> cent_dif = central_difference_4(img);
     cent_dif             = Lp_over_channels(cent_dif, p_c);
 
-    vector<double> weights{w_f, w_b, w_c};
     // Compute the alpha values
-    vector<Mat> alphas = compute_Wilkinson(for_dif, back_dif, cent_dif, weights);
+    vector<Mat> alphas;
+
+    // For each direction
+    for (int idx = 0; idx < 2; ++idx)
+    {
+        // Create an empty alpha image
+        alphas.emplace_back(for_dif[0].rows - 1, for_dif[0].cols - 1, CV_64F, 0.0);
+
+        // For each pixel in the alpha matrix
+        for (int y = 0; y < alphas[idx].rows; ++y)
+            for (int x = 0; x < alphas[idx].cols; ++x)
+            {
+                alphas[idx].at<double>(y,x) = abs(w_f * for_dif[idx].at<double>(y,x) + 
+                                                  w_b * back_dif[idx].at<double>(y,x) + 
+                                                  w_c * cent_dif[idx].at<double>(y,x));
+            }
+    }
+
 
     // Build and return the alpha tree
     at::AlphaTree retTree(alphas[0], alphas[1]);

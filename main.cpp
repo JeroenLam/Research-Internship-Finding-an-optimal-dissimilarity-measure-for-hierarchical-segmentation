@@ -10,7 +10,7 @@ int main(int argc, char** argv)
     //                        User input parser and path control
     // ==============================================================================
     // If no parameters are provided
-    int method = 0; // Gabor, CDL, Wilkinson
+    int method = 0; // Gabor, CDL, Difference
     int mode = 0;   // Compute score, Evaluate alpha
     if (argc < 1)
     {
@@ -24,7 +24,7 @@ int main(int argc, char** argv)
         {
             if (argc == 2)
             {
-                cout << "Run '-h <Gabor, CDL, Wilkinson>' for the parameter information for each mode\n";
+                cout << "Run '-h <Gabor, CDL, Difference>' for the parameter information for each mode\n";
                 return 0;
             }
             string arg2(argv[2]);
@@ -44,12 +44,12 @@ int main(int argc, char** argv)
                 cout << "  <program name> CDL <img path> -<#alphas> (<alpha(1)> ... <alpha(n)>) <l_p dissimilarity> <l_p edge> <slope edge> <center edge> <weight edge> <l_p ridge> <slope ridge> <center ridge> <weight ridge>\n";
                 return 0;
             }
-            else if (arg2.compare("Wilkinson") == 0 || arg2.compare("wilkinson") == 0)
+            else if (arg2.compare("Difference") == 0 || arg2.compare("difference") == 0)
             {
                 cout << "Run the following to compute the scores based on the provided ground truths and filter parameters:\n";
-                cout << "  <program name> Wilkinson <img path> <#gt> (<gt1 path> ... <gt(n) path>) <l_p over FD> <weight of FD> <l_p over BD> <weight of BD> <l_p over CD> <weight of CD>\n'";
+                cout << "  <program name> Difference <img path> <#gt> (<gt1 path> ... <gt(n) path>) <l_p over FD> <weight of FD> <l_p over BD> <weight of BD> <l_p over CD> <weight of CD>\n'";
                 cout << "Run the following to evaluta the filter at multiple alpha levels and store the resulting images to disk:\n";
-                cout << "  <program name> Wilkinson <img path> -<#alphas> (<alpha(1)> ... <alpha(n)>) <l_p over FD> <weight of FD> <l_p over BD> <weight of BD> <l_p over CD> <weight of CD>\n'";
+                cout << "  <program name> Difference <img path> -<#alphas> (<alpha(1)> ... <alpha(n)>) <l_p over FD> <weight of FD> <l_p over BD> <weight of BD> <l_p over CD> <weight of CD>\n'";
                 return 0;
             }
         }
@@ -61,13 +61,13 @@ int main(int argc, char** argv)
         {
             method = 2;
         }
-        else if (arg1.compare("Wilkinson") == 0 || arg1.compare("wilkinson") == 0)
+        else if (arg1.compare("Difference") == 0 || arg1.compare("difference") == 0)
         {
             method = 3;
         }
         else
         {
-            cout << "Run '-h <Gabor, CDL, Wilkinson>' for the parameter information for each method\n";
+            cout << "Run '-h <Gabor, CDL, Difference>' for the parameter information for each method\n";
             return 0;
         }
     }
@@ -151,7 +151,7 @@ int main(int argc, char** argv)
                                          p_edge, slope_edge, center_edge, weight_edge,
                                          p_ridge, slope_ridge, center_ridge, weight_ridge);
     }
-    else if (method == 3)     // Wilkinson
+    else if (method == 3)     // Difference
     {
         double p_f = atof(argv[par_off]);
         double w_f = atof(argv[par_off+1]);
@@ -160,7 +160,7 @@ int main(int argc, char** argv)
         double p_c = atof(argv[par_off+4]);
         double w_c = atof(argv[par_off+5]);
 
-        tree = generate_wilkinson_alphatree(img, p_f, w_f, p_b, w_b, p_c, w_c);
+        tree = generate_difference_alphatree(img, p_f, w_f, p_b, w_b, p_c, w_c);
     }
 
     // ==============================================================================
