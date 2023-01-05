@@ -1,5 +1,5 @@
 # Automated segmentation of VHR images using alpha-trees
-This repository contains the code related to the corresponding reasearch internship project. The corresponding report can be found [here](http://google.nl).
+This repository contains the code related to the corresponding reasearch internship project. The corresponding report can be found [here](https://fse.studenttheses.ub.rug.nl/29064/).
 
 ### Installation
 Note that the software has only been tested on Linux and WSL.
